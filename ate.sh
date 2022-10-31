@@ -93,8 +93,9 @@ function reip_conf() {
 myip=$(curl ip.qaros.com | awk 'NR==1')
 if [ ! -z ${myip} ]; then
 echo "server {
-        listen 80;
-        server_name "${myip}";
+        listen 80 default_server;
+        server_name _;
+	return 301 https://$host$request_uri;
         location / {
             root   html;
             index  index.html index.htm;
