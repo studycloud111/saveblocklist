@@ -95,7 +95,9 @@ if [ ! -z ${myip} ]; then
 echo "server {
         listen 80 default_server;
         server_name _;
-	return 301 https://$host$request_uri;
+	if ($server_port !~ 443){
+        rewrite ^(/.*)$ https://$host$1 permanent;
+    	}
         location / {
             root   html;
             index  index.html index.htm;
