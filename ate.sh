@@ -92,21 +92,7 @@ function get_conf() {
 function reip_conf() {
 myip=$(curl ip.qaros.com | awk 'NR==1')
 if [ ! -z ${myip} ]; then
-echo "server {
-        listen 80 default_server;
-        server_name _;
-	if ($server_port !~ 443){
-        rewrite ^(/.*)$ https://$host$1 permanent;
-    	}
-        location / {
-            root   html;
-            index  index.html index.htm;
-        }
-        error_page   500 502 503 504  /50x.html;
-        location = /50x.html {
-            root   html;
-        }
-    }">/usr/local/nginx/meip/reip.conf
+
     echo "${myip}"
     echo "写入成功"
     systemctl start nginx
