@@ -36,8 +36,7 @@ WantedBy=multi-user.target
 
 EOF
 
-systemctl start ddns.service
-systemctl start ddns.timer
+
 systemctl reload
 } 
 ipddns
