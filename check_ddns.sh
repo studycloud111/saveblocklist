@@ -2,7 +2,7 @@
 PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
 export PATH
 rm -rf  /root/ipd.sh
-wget -P /root/ipd.sh https://raw.githubusercontent.com/studycloud111/saveblocklist/main/ddns.sh
+wget -P /root https://raw.githubusercontent.com/studycloud111/saveblocklist/main/ipd.sh
 #写入定时任务文件
 ipddns(){
 cat > /root/ipddns << EOF
