@@ -8,7 +8,7 @@ if [ ${myip} = ${twip} ]; then
 else
     systemctl restart nginx
 cat > /root/ipddns << EOF
-    ${myip}
+${myip}
 EOF
     echo "nginx重启成功"
 fi
