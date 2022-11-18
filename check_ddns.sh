@@ -36,8 +36,8 @@ WantedBy=multi-user.target
 
 EOF
 
+systemctl daemon-reload
 
-systemctl reload
 } 
 ipddns
 cron_file
