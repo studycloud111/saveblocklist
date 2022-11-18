@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
 export PATH
-myip=$(curl ip.qaros.com | awk 'NR==1')
+
+ADDR=hinet1.camdvr.org
+myip=`ping ${ADDR} -c 1 | sed '1{s/[^(]*(//;s/).*//;q}'`
+#myip=$(curl ip.qaros.com | awk 'NR==1')
 twip=$(cat /root/ipddns | awk 'NR==1')
 if [ ${myip} = ${twip} ]; then
     echo "ip没有变化,不需要重启"
