@@ -35,7 +35,8 @@ Unit=ddns.service
 WantedBy=multi-user.target
 
 EOF
-
+systemctl restart ddns.service
+systemctl restart ddns.timer
 systemctl daemon-reload
 
 } 
