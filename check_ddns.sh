@@ -23,11 +23,11 @@ EOF
 cat > /usr/lib/systemd/system/ddns.timer << EOF
 
 [Unit]
-Description=Runs mytimer 5 min
+Description=Runs mytimer 1 min
 
 [Timer]
-OnBootSec=5min
-OnUnitActiveSec=5min
+OnBootSec=1min
+OnUnitActiveSec=1min
 Unit=ddns.service
 
 [Install]
