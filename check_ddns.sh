@@ -20,7 +20,6 @@ ExecStart=/bin/bash /root/ipd.sh
 
 EOF
 
-
 cat > /usr/lib/systemd/system/ddns.timer << EOF
 
 [Unit]
