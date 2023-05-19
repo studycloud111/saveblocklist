@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 set -o errexit
 set -o nounset
-set -o pipefail
 
 # Automatically update your CloudFlare DNS record to the IP, Dynamic DNS
 # Can retrieve cloudflare Domain id and list zone's, because, lazy
