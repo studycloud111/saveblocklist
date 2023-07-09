@@ -1,12 +1,12 @@
 # 使用 Ubuntu 作为基础镜像
-FROM ubuntu:20.04
+FROM ubuntu:20.04 as builder
 
 # 设置环境变量
 ENV TENGINE_VERSION="2.4.1"
 ENV TENGINE_DOWNLOAD_URL="https://github.com/studycloud111/saveblocklist/raw/main/tengine-2.4.1.tar.gz"
 ENV TENGINE_DIR="/root/tengine-${TENGINE_VERSION}"
 
-# 安装依赖
+# 安装编译依赖
 RUN apt-get update && apt-get install -y \
     build-essential \
     libpcre3 \
@@ -18,20 +18,25 @@ RUN apt-get update && apt-get install -y \
     make \
     iperf3 \
     vim \
-    wget \
-    && rm -rf /var/lib/apt/lists/*
+    wget
 
-# 下载并解压 Tengine，并列出解压后的目录结构
+# 下载并解压 Tengine
+WORKDIR /root
 RUN wget -O "${TENGINE_DIR}.tar.gz" "$TENGINE_DOWNLOAD_URL" \
-    && tar zxf "${TENGINE_DIR}.tar.gz" -C /root/ \
-    && rm "${TENGINE_DIR}.tar.gz" \
-    && ls -alh "${TENGINE_DIR}"
+    && tar zxf "${TENGINE_DIR}.tar.gz" \
+    && rm "${TENGINE_DIR}.tar.gz"
 
 # 编译并安装 Tengine
 WORKDIR $TENGINE_DIR
-RUN ./configure --with-http_realip_module --without-http_upstream_keepalive_module --with-stream --with-stream_ssl_module --with-stream_sni --add-module=modules/ngx_http_upstream_* --add-module=modules/ngx_debug_* --add-module=modules/ngx_http_slice_module --add-module=modules/ngx_http_user_agent_module --add-module=modules/ngx_http_reqstat_module --add-module=modules/ngx_http_proxy_connect_module --add-module=modules/ngx_http_footer_filter_module && \
-    make && make install && \
-    ln -sf /usr/local/nginx/sbin/nginx /usr/bin/nginx
+RUN ./configure --with-debug --with-http_realip_module --without-http_upstream_keepalive_module --with-stream --with-stream_ssl_module --with-stream_sni --add-module=modules/ngx_http_upstream_* --add-module=modules/ngx_debug_* --add-module=modules/ngx_http_slice_module --add-module=modules/ngx_http_user_agent_module --add-module=modules/ngx_http_reqstat_module --add-module=modules/ngx_http_proxy_connect_module --add-module=modules/ngx_http_footer_filter_module \
+    && make && make install \
+    && ln -sf /usr/local/nginx/sbin/nginx /usr/bin/nginx
+
+# 使用更小的基础镜像
+FROM ubuntu:20.04
+
+# 复制编译好的 Tengine
+COPY --from=builder /usr/local/nginx /usr/local/nginx
 
 # 设置 Tengine 配置
 RUN mkdir -p /usr/local/nginx/mytcp /usr/local/nginx/meip
