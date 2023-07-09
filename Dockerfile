@@ -1,12 +1,12 @@
-# 使用 Ubuntu 作为基础镜像
-FROM ubuntu:20.04 as builder
+FROM ubuntu:latest
 
-# 设置环境变量
-ENV TENGINE_VERSION="2.4.1"
-ENV TENGINE_DOWNLOAD_URL="https://github.com/studycloud111/saveblocklist/raw/main/tengine-2.4.1.tar.gz"
-ENV TENGINE_DIR="/root/tengine-${TENGINE_VERSION}"
+# 设置工作目录
+WORKDIR /root/tengine-2.4.1
 
-# 安装编译依赖
+# 复制文件到工作目录
+COPY ./tengine-2.4.1 .
+
+# 安装依赖，并清理缓存
 RUN apt-get update && apt-get install -y \
     build-essential \
     libpcre3 \
@@ -18,32 +18,29 @@ RUN apt-get update && apt-get install -y \
     make \
     iperf3 \
     vim \
-    wget
+    wget \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# 下载并解压 Tengine
-WORKDIR /root
-RUN wget -O "${TENGINE_DIR}.tar.gz" "$TENGINE_DOWNLOAD_URL" \
-    && tar zxf "${TENGINE_DIR}.tar.gz" \
-    && rm "${TENGINE_DIR}.tar.gz"
+# 编译并安装
+RUN ./configure --prefix=/app/tengine --with-debug --with-http_realip_module --without-http_upstream_keepalive_module --with-stream --with-stream_ssl_module --with-stream_sni --add-module=modules/ngx_http_upstream_* --add-module=modules/ngx_debug_* --add-module=modules/ngx_http_slice_module --add-module=modules/ngx_http_user_agent_module --add-module=modules/ngx_http_reqstat_module --add-module=modules/ngx_http_proxy_connect_module --add-module=modules/ngx_http_footer_filter_module \
+    && make \
+    && make install
 
-# 编译并安装 Tengine
-WORKDIR $TENGINE_DIR
-RUN ./configure --with-debug --with-http_realip_module --without-http_upstream_keepalive_module --with-stream --with-stream_ssl_module --with-stream_sni --add-module=modules/ngx_http_upstream_* --add-module=modules/ngx_debug_* --add-module=modules/ngx_http_slice_module --add-module=modules/ngx_http_user_agent_module --add-module=modules/ngx_http_reqstat_module --add-module=modules/ngx_http_proxy_connect_module --add-module=modules/ngx_http_footer_filter_module \
-    && make && make install \
-    && ln -sf /usr/local/nginx/sbin/nginx /usr/bin/nginx
+# 设置容器时区，并创建配置文件目录
+RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime 
 
-# 使用更小的基础镜像
-FROM ubuntu:20.04
+# 设置环境变量
+ENV LANG=en_US.UTF-8
 
-# 复制编译好的 Tengine
-COPY --from=builder /usr/local/nginx /usr/local/nginx
-
+# 工作目录
+WORKDIR /app/tengine
 # 设置 Tengine 配置
 RUN mkdir -p /usr/local/nginx/mytcp /usr/local/nginx/meip
 RUN echo 'user  root; \n\
 worker_processes auto; \n\
 worker_rlimit_nofile 51200; \n\
-pid        /usr/local/nginx/logs/nginx.pid; \n\
+pid        /app/tengine/logs/nginx.pid; \n\
 events \n\
     { \n\
         use epoll; \n\
@@ -62,10 +59,10 @@ http { \n\
     check_shm_size 50m; \n\
     #rewrite \n\
     include /usr/local/nginx/meip/*.conf; \n\
-}' > /usr/local/nginx/conf/nginx.conf
+}' > /app/tengine/conf/nginx.conf
 
-# 暴露端口
+# 暴露容器端口号
 EXPOSE 80 443
 
-# 启动 Tengine
-CMD ["nginx", "-g", "daemon off;"]
+# 启动容器时自动启动 tengine
+CMD /app/tengine/sbin/nginx -g "daemon off;"
