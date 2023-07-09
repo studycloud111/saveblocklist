@@ -13,3 +13,8 @@ wget --no-check-certificate -O file.sh "https://raw.githubusercontent.com/studyc
 ```ssh
 wget --no-check-certificate -O check_ddns.sh "https://raw.githubusercontent.com/studycloud111/saveblocklist/main/check_ddns.sh" && chmod +x check_ddns.sh && ./check_ddns.sh
 ```
+
+- docker nginx
+```ssh
+docker run -d --name tengine -p 80:80 -p 443:443 -v /usr/local:/usr/local xiaoyang12/tengine-2.4.1:latest
+```
