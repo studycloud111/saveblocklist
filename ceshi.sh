@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Global constants
-TENGINE_VERSION="2.3.3"
+TENGINE_VERSION="2.4.1"
 TENGINE_DOWNLOAD_URL="https://github.com/studycloud111/saveblocklist/raw/main/tengine-2.4.1.tar.gz"
 TENGINE_DIR="/root/tengine-${TENGINE_VERSION}"
 
