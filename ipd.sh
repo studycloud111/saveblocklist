@@ -2,16 +2,38 @@
 PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
 export PATH
 
-ADDR=hinet1.camdvr.org
-myip=`ping ${ADDR} -c 1 | sed '1{s/[^(]*(//;s/).*//;q}'`
-#myip=$(curl ip.qaros.com | awk 'NR==1')
-twip=$(cat /root/ipddns | awk 'NR==1')
-if [ ${myip} = ${twip} ]; then
-    echo "ip没有变化,不需要重启"
-else
-    systemctl restart nginx
-cat > /root/ipddns << EOF
-${myip}
-EOF
-    echo "nginx重启成功"
-fi
+# 想要检查的域名列表
+domains=("example1.com" "example2.com" "example3.com")
+
+# 存储旧IP的文件的基本路径
+old_ip_file_base='/tmp/old_ip_'
+
+# 检查每个域名
+for domain in "${domains[@]}"; do
+
+    # 为每个域名设置一个单独的旧IP文件
+    old_ip_file="${old_ip_file_base}${domain}"
+
+    # 检查旧IP文件是否存在，如果不存在则创建一个空的
+    if [ ! -f $old_ip_file ]; then
+        touch $old_ip_file
+    fi
+
+    # 使用dig命令获取当前IP
+    current_ip=$(dig +short $domain)
+
+    # 从旧IP文件中读取旧IP
+    old_ip=$(cat $old_ip_file)
+
+    # 比较当前IP和旧IP，如果不同则重载Nginx配置
+    if [ "$current_ip" != "$old_ip" ]; then
+        echo "IP address for $domain has changed to $current_ip, reloading Nginx configuration"
+    
+        # 更新旧IP文件
+        echo $current_ip > $old_ip_file
+
+        # 重载Nginx配置
+        sudo docker exec -it nginx nginx -s reload
+    fi
+done
+
