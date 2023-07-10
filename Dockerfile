@@ -1,4 +1,8 @@
-FROM ubuntu:latest
+# 使用官方的 Ubuntu 镜像作为基础镜像
+FROM ubuntu:latest AS build
+
+# 设置环境变量
+ENV LANG=en_US.UTF-8
 
 # 设置工作目录
 WORKDIR /root/tengine-2.4.1
@@ -6,8 +10,8 @@ WORKDIR /root/tengine-2.4.1
 # 复制文件到工作目录
 COPY ./tengine-2.4.1 .
 
-# 安装依赖，并清理缓存
-RUN apt-get update && apt-get install -y \
+# 安装依赖并清理缓存
+RUN apt-get update -qq && apt-get install -y -qq \
     build-essential \
     libpcre3 \
     libpcre3-dev \
@@ -27,17 +31,18 @@ RUN ./configure --prefix=/app/tengine --with-debug --with-http_realip_module --w
     && make \
     && make install
 
-# 设置容器时区，并创建配置文件目录
-RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime 
+FROM ubuntu:latest
 
-# 设置环境变量
-ENV LANG=en_US.UTF-8
-
-# 工作目录
+# 设置工作目录
 WORKDIR /app/tengine
-# 设置 Tengine 配置
-RUN mkdir -p /usr/local/nginx/mytcp /usr/local/nginx/meip
-RUN echo 'user  root; \n\
+
+# 从构建阶段复制文件
+COPY --from=build /app/tengine /app/tengine
+
+# 设置时区，创建配置文件目录，并设置 Tengine 配置
+RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+    && mkdir -p /usr/local/nginx/mytcp /usr/local/nginx/meip \
+    && echo 'user  root; \n\
 worker_processes auto; \n\
 worker_rlimit_nofile 51200; \n\
 pid        /app/tengine/logs/nginx.pid; \n\
