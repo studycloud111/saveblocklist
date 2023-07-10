@@ -27,7 +27,25 @@ RUN apt-get update -qq && apt-get install -y -qq \
     && rm -rf /var/lib/apt/lists/*
 
 # 编译并安装
-RUN ./configure --prefix=/app/tengine --with-debug --with-http_realip_module --without-http_upstream_keepalive_module --with-stream --with-stream_ssl_module --with-stream_sni --add-module=modules/ngx_http_upstream_* --add-module=modules/ngx_debug_* --add-module=modules/ngx_http_slice_module --add-module=modules/ngx_http_user_agent_module --add-module=modules/ngx_http_reqstat_module --add-module=modules/ngx_http_proxy_connect_module --add-module=modules/ngx_http_footer_filter_module \
+RUN ./configure --prefix=/app/tengine \
+--with-debug --with-http_realip_module \
+--without-http_upstream_keepalive_module \
+--with-stream --with-stream_ssl_module \
+--with-stream_sni \
+--add-module=modules/ngx_http_upstream_consistent_hash_module \
+--add-module=modules/ngx_http_upstream_vnswrr_module \
+--add-module=modules/ngx_http_upstream_dynamic_module \
+--add-module=modules/ngx_http_upstream_dyups_module \
+--add-module=modules/ngx_http_upstream_keepalive_module \
+--add-module=modules/ngx_http_upstream_session_sticky_module \
+--add-module=modules/ngx_http_upstream_check_module \
+--add-module=modules/ngx_debug_pool \
+--add-module=modules/ngx_debug_timer \
+--add-module=modules/ngx_http_slice_module \
+--add-module=modules/ngx_http_user_agent_module \
+--add-module=modules/ngx_http_reqstat_module \
+--add-module=modules/ngx_http_proxy_connect_module \
+--add-module=modules/ngx_http_footer_filter_module \
     && make \
     && make install
 
