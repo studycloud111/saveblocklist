@@ -3,7 +3,7 @@ PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
 export PATH
 
 # 想要检查的域名列表
-domains=("example1.com" "example2.com" "example3.com")
+domains=("hinet1.camdvr.org")
 
 # 存储旧IP的文件的基本路径
 old_ip_file_base='/tmp/old_ip_'
