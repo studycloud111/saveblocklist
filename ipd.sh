@@ -2,6 +2,31 @@
 PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
 export PATH
 
+
+# 检查dig命令是否存在，如果不存在则尝试安装dnsutils
+if ! command -v dig &> /dev/null; then
+    echo "'dig' command could not be found. Attempting to install dnsutils..."
+    # 尝试识别Linux发行版
+    if [ -f /etc/os-release ]; then
+        # shellcheck disable=SC1091
+        . /etc/os-release
+        OS=$NAME
+    fi
+
+    case $OS in
+        'Ubuntu' | 'Debian')
+            sudo apt-get update
+            sudo apt-get install -y dnsutils
+            ;;
+        'CentOS Linux' | 'Fedora' | 'Red Hat Enterprise Linux')
+            sudo yum install -y bind-utils
+            ;;
+        *)
+            echo "Unsupported OS, please install 'dig' manually."
+            exit 1
+            ;;
+    esac
+fi
 # 想要检查的域名列表
 domains=("hinet1.camdvr.org")
 
