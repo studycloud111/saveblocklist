@@ -63,8 +63,6 @@ http { \n\
     default_type  application/octet-stream; \n\
     sendfile        on; \n\
     keepalive_timeout  120; \n\
-    server_names_hash_bucket_size 256; \n\
-    server_names_hash_max_size 1024; \n\
     keepalive_requests 10000; \n\
     check_shm_size 50m; \n\
     #rewrite \n\
