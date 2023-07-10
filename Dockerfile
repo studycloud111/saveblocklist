@@ -88,7 +88,7 @@ http { \n\
 }' > /app/tengine/conf/nginx.conf
 
 # 暴露容器端口号
-EXPOSE 80 443
+EXPOSE 80 443 3389
 
 # 启动容器时自动启动 tengine
 CMD ["nginx", "-g", "daemon off;"]
