@@ -39,6 +39,9 @@ WORKDIR /app/tengine
 # 从构建阶段复制文件
 COPY --from=build /app/tengine /app/tengine
 
+# 创建nginx命令的软链接
+RUN ln -s /app/tengine/sbin/nginx /usr/sbin/nginx
+
 # 设置时区，创建配置文件目录，并设置 Tengine 配置
 RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && mkdir -p /usr/local/nginx/mytcp /usr/local/nginx/meip \
@@ -72,4 +75,4 @@ http { \n\
 EXPOSE 80 443
 
 # 启动容器时自动启动 tengine
-CMD /app/tengine/sbin/nginx -g "daemon off;"
+CMD ["nginx", "-g", "daemon off;"]
