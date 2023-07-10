@@ -56,7 +56,6 @@ RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && echo 'user  root; \n\
 worker_processes auto; \n\
 worker_rlimit_nofile 51200; \n\
-access_log off; \n\
 pid        /app/tengine/logs/nginx.pid; \n\
 events \n\
     { \n\
@@ -68,6 +67,7 @@ stream { \n\
     include /usr/local/nginx/mytcp/*.conf; \n\
 } \n\
 http { \n\
+    access_log off; \n\
     include       mime.types; \n\
     default_type  application/octet-stream; \n\
     sendfile        on; \n\
