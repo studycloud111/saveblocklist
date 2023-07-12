@@ -41,7 +41,7 @@ for domain in "${domains[@]}"; do
         echo $current_ip > $old_ip_file
 
         # 重载Nginx配置
-        sudo docker exec -it nginx nginx -s reload
+       docker restart nginx
     fi
 done
 
