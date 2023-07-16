@@ -1,0 +1,16 @@
+# 使用一个官方Python运行时作为父镜像
+FROM python:3.8-slim-buster
+
+ENV rr=default_rr_value
+
+# 设置工作目录为根目录
+WORKDIR /root/ddns
+
+# 复制当前目录下的所有文件到容器的/root目录下
+ADD . /root/ddns
+
+# 安装在requirements.txt中列出的需要的包
+RUN pip install --no-cache-dir aliyun-python-sdk-core-v3 aliyun-python-sdk-alidns requests
+
+# 运行ddns.py当Docker启动时
+CMD python ddns.py --rr $rr
