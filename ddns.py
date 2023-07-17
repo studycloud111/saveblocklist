@@ -70,7 +70,18 @@ def update_dns(value, rr):
 
 
 def get_public_ip():
-    urls = ['http://ifconfig.me/ip', 'https://api.ipify.org', 'https://ipecho.net/plain']
+    urls = [
+    'http://ifconfig.me/ip', 
+    'https://api.ipify.org', 
+    'https://ipecho.net/plain', 
+    'https://ipinfo.io/ip',
+    'https://www.trackip.net/ip', 
+    'https://icanhazip.com',
+    'https://ident.me',
+    'https://checkip.amazonaws.com',
+    'https://ip.seeip.org',
+    'https://myexternalip.com/raw'
+]
     for url in urls:
         try:
             response = requests.get(url, timeout=5)
