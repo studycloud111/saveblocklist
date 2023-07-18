@@ -3,6 +3,7 @@ import requests
 import time
 import json
 import logging
+import threading
 from aliyunsdkcore.client import AcsClient
 from aliyunsdkalidns.request.v20150109 import DescribeDomainRecordsRequest, UpdateDomainRecordRequest
 
@@ -10,15 +11,15 @@ from aliyunsdkalidns.request.v20150109 import DescribeDomainRecordsRequest, Upda
 logging.basicConfig(level=logging.INFO)
 
 # 在这里填写你的 Access Key ID 和 Access Key Secret
-access_key_id = 'LTAI5tE8QSWRJKij4'
-access_key_secret = 'aWuq0ZKYkt2jOvpMQDIKvo5uI'
+access_key_id = 'LTAI5tE8ESWRJKij4'
+access_key_secret = 'aWuq0JOvpMQDIKvo5uI'
 
 # 在这里填写你的一级域名
-domain_name = 'fs456789.com'
+domain_name = 'f23456789.com'
 
 # 在这里填写你的 Telegram Bot Token 和 Chat ID
-telegram_bot_token = '61403717nbZCUwbzvfhD4R_piuKbU'
-telegram_chat_id = '-115399382'
+telegram_bot_token = '6140371sEiXScILk7nbZCUwbzvfhD4R_piuKbU'
+telegram_chat_id = '-11599382'
 
 def send_telegram_message(message):
     url = f"https://api.telegram.org/bot{telegram_bot_token}/sendMessage"
@@ -40,6 +41,10 @@ def delete_telegram_message(message_id):
         response.raise_for_status()
     except requests.RequestException as e:
         logging.error(f"Failed to delete Telegram message: {e}")
+
+def delete_telegram_message_after_delay(message_id, delay):
+    time.sleep(delay)  # 在新线程中等待
+    delete_telegram_message(message_id)
 
 def update_dns(value, rr):
     try:
@@ -73,12 +78,13 @@ def update_dns(value, rr):
 
         client.do_action_with_exception(request)
         logging.info('DNS record updated.')
-        message_id = send_telegram_message(f'地址池有ip被墙，已更新dns，缓存1秒，请刷新本地dns获取新ip. 新 IP: {value}')
-        time.sleep(60)  # 等待 60 秒
-        delete_telegram_message(message_id)
+        message_id = send_telegram_message(f'地址池有ip被墙，已更新地址池被墙ip. 新 IP: {value}，如果超时，可以点击clash的连通性测试，快速获取新ip，此消息180秒后删除')
+        
+        # 使用新线程来删除消息
+        delete_thread = threading.Thread(target=delete_telegram_message_after_delay, args=(message_id, 180))
+        delete_thread.start()
     except Exception as e:
         logging.error(f"Failed to update DNS: {e}")
-        send_telegram_message(f"Failed to update DNS: {e}")
 
 def get_public_ip():
     urls = [
