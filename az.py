@@ -144,3 +144,7 @@ while True:
                 print(f"Error with VM {vm_name}: {e}")
 
     time.sleep(10)
+
+###f965a730-1a73-48fe-98d1-0a8f88329595,855b09d2-bcc1-4b93-b0ad-38ff8e95de88,rxr8Q~B2rKlUGL-OLhVB1IeT4soFTB3QUHvaqdoL,4e122752-89b9-4b90-8d05-68dc70f84696,HKZZL_GROUP,eastasia,HKZZL
+f965a730-1a73-48fe-98d1-0a8f88329595,855b09d2-bcc1-4b93-b0ad-38ff8e95de88,rxr8Q~B2rKlUGL-OLhVB1IeT4soFTB3QUHvaqdoL,4e122752-89b9-4b90-8d05-68dc70f84696,JPCE_GROUP,japaneast,JPCE
+f965a730-1a73-48fe-98d1-0a8f88329595,855b09d2-bcc1-4b93-b0ad-38ff8e95de88,rxr8Q~B2rKlUGL-OLhVB1IeT4soFTB3QUHvaqdoL,4e122752-89b9-4b90-8d05-68dc70f84696,HKCE_GROUP,eastasia,hkCE
