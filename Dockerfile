@@ -2,17 +2,18 @@
 FROM ubuntu:latest AS build
 
 # 设置环境变量
-ENV LANG=en_US.UTF-8
+ENV LANG=en_US.UTF-8 LANGUAGE=en_US:en LC_ALL=en_US.UTF-8
 
 # 设置工作目录
-WORKDIR /root/tengine-2.4.1
+WORKDIR /root/tengine-3.0.0
 
 # 复制文件到工作目录
-COPY ./tengine-2.4.1 .
+COPY ./tengine-3.0.0 .
 
 # 安装依赖并清理缓存
 RUN apt-get update -qq \
-    && apt-get install -y --no-install-recommends build-essential libpcre3 libpcre3-dev zlib1g-dev openssl libssl-dev gcc make iperf3 vim wget \
+    && apt-get install -y --no-install-recommends build-essential libpcre3 libpcre3-dev zlib1g-dev openssl libssl-dev gcc make iperf3 vim wget locales \
+    && locale-gen en_US.UTF-8 \
     && ./configure --prefix=/app/tengine \
     --with-debug --with-http_realip_module \
     --without-http_upstream_keepalive_module \
