@@ -8,7 +8,7 @@ from aliyunsdkalidns.request.v20150109 import DeleteDomainRecordRequest, AddDoma
     DescribeDomainRecordsRequest
 
 # 初始化Aliyun客户端
-ali_client = AcsClient('sdfsd4', 'aWsdfsdfsdf5uI', 'cn-hangzhou')
+ali_client = AcsClient('LTAI5tE8E6TT67PQSWRJKij4', 'aWuq0JtnKXZKYkt2jOvpMQDIKvo5uI', 'cn-hangzhou')
 #参数
 parser = argparse.ArgumentParser(description="Script to fetch record ID.")
 parser.add_argument("--domain", type=str, required=True, help="Domain name")
@@ -81,27 +81,32 @@ def connet(ip):
             pass
     return True
 
+def is_ip_active(ip):
+    # Check if IP is active using the `connet` function
+    return not connet(ip)
 
-aws = []
+def load_aws():
+    global aws
+    aws = []
+    with open(args.file, 'r') as f:
+        ydx = f.read().split('\n')
+        for ydx in ydx:
+            ydx = ydx.split(',')
+            if len(ydx) > 3:
+                try:
+                    client = boto3.client('lightsail', region_name=ydx[2], aws_access_key_id=ydx[0],
+                                          aws_secret_access_key=ydx[1])
+                    response = client.get_instances()
+                    ids = {}
+                    for i in range(len(ydx) - 3):
+                        for instance in response['instances']:
+                            if instance['name'] == ydx[i + 3]:
+                                ids[instance['name']] = instance['publicIpAddress']
+                        aws.append({'client': client, "ids": ids, 'region_name': ydx[2]})
+                except Exception as e:
+                    print(e)
 
-with open(args.file, 'r') as f:
-    ydx = f.read().split('\n')
-    for ydx in ydx:
-        ydx = ydx.split(',')
-        if len(ydx) > 3:
-            try:
-                client = boto3.client('lightsail', region_name=ydx[2], aws_access_key_id=ydx[0],
-                                      aws_secret_access_key=ydx[1])
-                response = client.get_instances()
-                ids = {}
-                for i in range(len(ydx) - 3):
-                    for instance in response['instances']:
-                        if instance['name'] == ydx[i + 3]:
-                            ids[instance['name']] = instance['publicIpAddress']
-                aws.append({'client': client, "ids": ids,'region_name': ydx[2]  # Add region_name to the dictionary
-})
-            except Exception as e:
-                print(e)
+load_aws()
 
 while True:
     all_ips = []
@@ -155,7 +160,8 @@ while True:
                     a["ids"][k] = response['instance']['publicIpAddress']
                     print(k, v, "->", response['instance']['publicIpAddress'], 'adding DNS record and change ip success')
                 except Exception as e:
-                    print(k, e, "change ip fail")
+                    print(k, e, "change ip fail, load aws")
+                    load_aws()
             else:
                 try:
                     is_resolved = get_record_id(args.domain, args.rr, v)
