@@ -16,5 +16,5 @@ wget --no-check-certificate -O check_ddns.sh "https://raw.githubusercontent.com/
 
 - docker nginx
 ```ssh
-docker run -d --name tengine -p 80:80 -p 443:443 -v /usr/local:/usr/local xiaoyang12/tengine-2.4.1:latest
+docker run -d --name tengine -p 80:80 -p 443:443 -v /usr/local:/usr/local spcloud12/tengine-3.0.0:latest
 ```
