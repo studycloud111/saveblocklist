@@ -44,7 +44,7 @@ def ensure_db_connection(args):
 
 def get_current_stock(args):
     ensure_db_connection(args)
-    query = "SELECT `id`, `gd_name`, `in_stock` FROM `goods`"
+    query = "SELECT `id`, `gd_name`, `in_stock` FROM `goods` WHERE `in_stock` > 0"
     cursor.execute(query)
     return {
         product[0]: {
