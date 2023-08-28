@@ -65,7 +65,7 @@ def truncate_string(s, length=20):
 def create_stock_message(current_stock, args):
     current_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     message = "🔔<b>库存更新：</b>🔔\n"
-    message += "=======================================\n"
+    message += "=======================================\n\n"
     
     for product_id, data in current_stock.items():
         gd_name = truncate_string(data['gd_name'], 15)
