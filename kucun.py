@@ -18,14 +18,10 @@ def parse_args():
 
     return parser.parse_args()
 
-# 配置日志
 logging.basicConfig(level=logging.INFO)
 
-# 初始化数据库连接和游标
 conn = None
 cursor = None
-
-# 上一次的消息内容、消息信息和库存信息
 last_message_content = None
 last_messages_info = {}
 last_stock_info = {}
@@ -44,28 +40,41 @@ def ensure_db_connection(args):
 
 def get_current_stock(args):
     ensure_db_connection(args)
-    query = "SELECT `id`, `gd_name`, `in_stock` FROM `goods` WHERE `in_stock` > 0"
+    query = """
+        SELECT goods.id, goods.gd_name, COUNT(carmis.status) as status_count
+        FROM goods
+        LEFT JOIN carmis ON goods.id = carmis.goods_id
+        WHERE carmis.status = 1
+        GROUP BY goods.id, goods.gd_name
+        HAVING
+        status_count > 0;
+    """
     cursor.execute(query)
     return {
         product[0]: {
             'id': product[0],
             'gd_name': product[1],
-            'in_stock': product[2]
+            'status_count': product[2]
         } for product in cursor.fetchall()
     }
 
 def create_stock_message(current_stock, args):
     current_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    message = "🔊库存实时更新:\n\n"
+    # 开始消息
+    message = "🔔<b>库存实时通知</b>🔔\n"
+    message += "🔷🔷🔷🔷🔷🔷🔷🔷\n"  # 使用蓝色钻石作为开头分隔线
     
     for product_id, data in current_stock.items():
         gd_name = data['gd_name']
-        stock = data['in_stock']
+        status_count = data['status_count']
         id = data['id']
         
-        message += f"☁️【{gd_name}】库存现有 <b>{stock}</b>个,👇\n💬   {args.website}{id}\n\n"
+        # 在一行内集中显示商品信息
+        message += f"▪ 💼<b>{gd_name}</b> 📊<b>{status_count}</b>个\n🔗{args.website}{id}\n"
+        message += "--------------------------\n"  # 商品间的分隔线
         
-    message += f"⏰ 更新时间: {current_time}\n"
+    # 更新时间
+    message += f"⏰<i>最后更新时间:</i> {current_time}⏰\n"
     return message
 
 def stock_increased(current_stock):
@@ -74,7 +83,7 @@ def stock_increased(current_stock):
     for product_id, data in current_stock.items():
         if product_id not in last_stock_info:
             return True
-        if data['in_stock'] > last_stock_info[product_id]['in_stock']:
+        if data['status_count'] > last_stock_info[product_id]['status_count']:
             return True
 
     return False
@@ -117,7 +126,7 @@ def main():
 
         message = create_stock_message(current_stock, args)
 
-        if stock_increased(current_stock):  # 判断库存是否增加
+        if stock_increased(current_stock):
             if last_messages_info and "message_id" in last_messages_info and hours_since_last_message() < 24:
                 delete_telegram_message(args, last_messages_info["message_id"])
             
@@ -128,7 +137,7 @@ def main():
                     "timestamp": datetime.datetime.now()
                 }
             last_message_content = message
-        elif message != last_message_content and "message_id" in last_messages_info:  # 当库存减少时
+        elif message != last_message_content and "message_id" in last_messages_info:
             url = f"https://api.telegram.org/bot{args.telegram_token}/editMessageText"
             payload = {
                 'chat_id': args.chat_id,
@@ -141,7 +150,6 @@ def main():
                 last_messages_info["timestamp"] = datetime.datetime.now()
             last_message_content = message
 
-        # 保存当前的库存信息
         last_stock_info = current_stock
 
         logging.info(f"Sleeping for {args.sleep_duration} seconds...")
