@@ -57,24 +57,27 @@ def get_current_stock(args):
             'status_count': product[2]
         } for product in cursor.fetchall()
     }
+def truncate_string(s, length=20):
+    return s if len(s) <= length else s[:length-3] + "..."
 
 def create_stock_message(current_stock, args):
     current_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     # 开始消息
-    message = "🔔<b>库存实时通知</b>🔔\n"
-    message += "🔷🔷🔷🔷🔷🔷🔷🔷\n"  # 使用蓝色钻石作为开头分隔线
+    message = "🔔<b>库存更新：</b>🔔\n"
+    message += "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"  # 使用等号作为主分隔线
     
     for product_id, data in current_stock.items():
-        gd_name = data['gd_name']
+        gd_name = truncate_string(data['gd_name'], 15)  # 缩短至15字符
         status_count = data['status_count']
         id = data['id']
         
-        # 在一行内集中显示商品信息
-        message += f"▪ 💼<b>{gd_name}</b> 📊<b>{status_count}</b>个\n🔗{args.website}{id}\n"
-        message += "--------------------------\n"  # 商品间的分隔线
+        # 在一行内显示商品信息
+        message += f"◉  <b>【{gd_name}】</b> 📦 x{status_count}\n"
+        message += f"🔗 <a href='{args.website}{id}'>购买链接</a>\n\n"
+
         
     # 更新时间
-    message += f"⏰<i>最后更新时间:</i> {current_time}⏰\n"
+    message += f"⏳ <i>更新时间：</i>{current_time} ⏳\n"
     return message
 
 def stock_increased(current_stock):
