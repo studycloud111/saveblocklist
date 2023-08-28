@@ -41,11 +41,11 @@ def ensure_db_connection(args):
 def get_current_stock(args):
     ensure_db_connection(args)
     query = """
-        SELECT goods.id, goods.gd_name, COUNT(carmis.status) as status_count
+        SELECT goods.id, goods.gd_name, COUNT(carmis.status) as status_count, goods.actual_price
         FROM goods
         LEFT JOIN carmis ON goods.id = carmis.goods_id
-        WHERE carmis.status = 1
-        GROUP BY goods.id, goods.gd_name
+        WHERE carmis.status = 1 AND carmis.deleted_at IS NULL
+        GROUP BY goods.id, goods.gd_name, goods.actual_price
         HAVING
         status_count > 0;
     """
@@ -54,29 +54,28 @@ def get_current_stock(args):
         product[0]: {
             'id': product[0],
             'gd_name': product[1],
-            'status_count': product[2]
+            'status_count': product[2],
+            'actual_price': product[3]  # 获取商品的实际价格
         } for product in cursor.fetchall()
     }
+
 def truncate_string(s, length=20):
     return s if len(s) <= length else s[:length-3] + "..."
 
 def create_stock_message(current_stock, args):
     current_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    # 开始消息
     message = "🔔<b>库存更新：</b>🔔\n"
-    message += "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"  # 使用等号作为主分隔线
+    message += "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
     
     for product_id, data in current_stock.items():
-        gd_name = truncate_string(data['gd_name'], 15)  # 缩短至15字符
+        gd_name = truncate_string(data['gd_name'], 15)
         status_count = data['status_count']
         id = data['id']
+        actual_price = data['actual_price']  # 获取商品的实际价格
         
-        # 在一行内显示商品信息
-        message += f"◉  <b>【{gd_name}】</b> 📦 x{status_count}\n"
-        message += f"🔗 <a href='{args.website}{id}'>购买链接</a>\n\n"
+        message += f"◉  <b>【{gd_name}】</b> 📦 x{status_count} 💰 ￥{actual_price} 🔗 <a href='{args.website}{id}'>购买链接</a>\n\n"
 
-        
-    # 更新时间
+
     message += f"⏳ <i>更新时间：</i>{current_time} ⏳\n"
     return message
 
