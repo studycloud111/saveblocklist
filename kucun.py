@@ -65,7 +65,7 @@ def truncate_string(s, length=20):
 def create_stock_message(current_stock, args):
     current_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     message = "🔔<b>库存更新：</b>🔔\n"
-    message += "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+    message += "=======================================\n"
     
     for product_id, data in current_stock.items():
         gd_name = truncate_string(data['gd_name'], 15)
@@ -73,9 +73,9 @@ def create_stock_message(current_stock, args):
         id = data['id']
         actual_price = data['actual_price']  # 获取商品的实际价格
         
-        message += f"◉  <b>【{gd_name}】</b> 📦 x{status_count} 💰 ￥{actual_price} 🔗 <a href='{args.website}{id}'>购买链接</a>\n\n"
+        message += f"🔸<b>【<code>{gd_name}</code>】</b> 📦 x<b>{status_count}</b> 💰 ￥<b>{actual_price}</b> 🔗 <a href='{args.website}{id}'>购买链接</a>\n\n"
 
-
+    message += "=======================================\n"
     message += f"⏳ <i>更新时间：</i>{current_time} ⏳\n"
     return message
 
