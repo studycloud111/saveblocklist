@@ -140,16 +140,28 @@ def main():
                 }
             last_message_content = message
         elif message != last_message_content and "message_id" in last_messages_info:
-            url = f"https://api.telegram.org/bot{args.telegram_token}/editMessageText"
-            payload = {
-                'chat_id': args.chat_id,
-                'message_id': last_messages_info["message_id"],
-                'text': message,
-                'parse_mode': 'HTML'
-            }
-            response = requests.post(url, data=payload).json()
-            if response.get("ok"):
-                last_messages_info["timestamp"] = datetime.datetime.now()
+            hours_passed = hours_since_last_message()
+            if hours_passed >= 48:
+                # 删除旧消息并发送新消息
+                delete_telegram_message(args, last_messages_info["message_id"])
+                response = send_telegram_message(args, message)
+                if response.get("ok"):
+                    last_messages_info = {
+                        "message_id": response["result"]["message_id"],
+                        "timestamp": datetime.datetime.now()
+                    }
+            else:
+                # 编辑旧消息
+                url = f"https://api.telegram.org/bot{args.telegram_token}/editMessageText"
+                payload = {
+                    'chat_id': args.chat_id,
+                    'message_id': last_messages_info["message_id"],
+                    'text': message,
+                    'parse_mode': 'HTML'
+                }
+                response = requests.post(url, data=payload).json()
+                if response.get("ok"):
+                    last_messages_info["timestamp"] = datetime.datetime.now()
             last_message_content = message
 
         last_stock_info = current_stock
