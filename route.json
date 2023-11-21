@@ -17,7 +17,7 @@
     	},
     	{
       "domain": [
-        "geosite:cn"
+        "baidu.com"
       ],
       "outboundTag": "block",
       "type": "field"
