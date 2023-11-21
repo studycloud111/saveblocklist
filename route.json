@@ -1,4 +1,4 @@
-    {
+{
     "domainStrategy": "IPOnDemand",
     "rules": [
         {
@@ -9,10 +9,71 @@
             ]
         },
         {
+      "type": "field",
+      "outboundTag": "block",
+      "ip": [
+        "geoip:private"
+      ]
+    	},
+    	{
+      "domain": [
+        "geosite:cn"
+      ],
+      "outboundTag": "block",
+      "type": "field"
+    },
+    {
+      "ip": [
+        "geoip:cn"
+      ],
+      "outboundTag": "block",
+      "type": "field"
+    },
+    {
+      "type": "field",
+      "outboundTag": "IPv4_out",
+      "network": "udp,tcp"
+    	},
+        {
+        "type": "field",
+        "outboundTag": "us_proxy",
+        "domain": [
+          "tvbanywhere.com",
+          "tvbanywhere.com.sg",
+          "cinemax.com",
+          "forthethrone.com",
+          "hbo.com",
+          "hbogo.com",
+          "hbomax.com",
+          "hbomaxcdn.com",
+          "hbonow.com",
+          "maxgo.com"
+            ]
+        },
+        {
+        "type": "field",
+        "outboundTag": "uk_proxy",
+        "domain": [
+          "geosite:bbc",
+          "geosite:twitter"
+            ]
+        },
+        {
         "type": "field",
         "outboundTag": "netflix_proxy",
         "domain": [
           "geosite:netflix"
+            ]
+        },
+        {
+        "type": "field",
+        "outboundTag": "catchplay_proxy",
+        "domain": [
+          "catchplay.com.tw",
+          "catchplay.com",
+          "geosite:disney",
+          "cloudfront.net",
+          "akamaized.net"
             ]
         },
         {
@@ -30,8 +91,6 @@
           "mytvsuperlimited.sc.omtrdc.net",
           "tvb.com",
           "tvb.com.au",
-          "tvbanywhere.com",
-          "tvbanywhere.com.sg",
           "tvbc.com.cn",
           "tvbeventpower.com.hk",
           "tvbusa.com",
@@ -46,7 +105,36 @@
         "outboundTag": "tw_proxy",
         "domain": [
           "geosite:bahamut",
+          "openai.com",
+          "cdn.auth0.com",
+          "azureedge.net",
+          "sentry.io",
+          "azurefd.net",
+          "intercomcdn.com",
+          "intercom.io",
+          "google-analytics.com",
+          "identrust.com",
+          "challenges.cloudflare.com",
+          "ai.com",
+          "oaistatic.com",
+          "oaiusercontent.com",
           "geosite:bilibili",
+          "control.kochava.com",
+          "d151l6v8er5bdm.cloudfront.net",
+          "d1sgwhnao7452x.cloudfront.net",
+          "dazn-api.com",
+          "dazn.com",
+          "dazndn.com",
+          "dc2-vodhls-perform.secure.footprint.net",
+          "dca-ll-livedazn-dznlivejp.s.llnwi.net",
+          "dcalivedazn.akamaized.net",
+          "dcblivedazn.akamaized.net",
+          "indazn.com",
+          "indaznlab.com",
+          "intercom.io",
+          "logx.optimizely.com",
+          "s.yimg.jp",
+          "sentry.io",
           "kktv.com.tw",
           "kktv.me",
           "kk.stream",
@@ -64,6 +152,19 @@
           "line-cdn.net",
           "line-scdn.net",
           "linetv.tw",
+          "bcbolthboa-a.akamaihd.net",
+          "hboasia1-i.akamaihd.net",
+          "hboasia2-i.akamaihd.net",
+          "hboasia3-i.akamaihd.net",
+          "hboasia4-i.akamaihd.net",
+          "hboasia5-i.akamaihd.net",
+          "44wilhpljf.execute-api.ap-southeast-1.amazonaws.com",
+          "s3-ap-southeast-1.amazonaws.com",
+          "cf-images.ap-southeast-1.prod.boltdns.net",
+          "players.brightcove.net",
+          "dai3fd1oh325y.cloudfront.net",
+          "hbogoasia.com",
+          "hbogoasia.hk",
           "akamaized.net",
           "acg.tv",
           "acgvideo.com",
@@ -87,7 +188,7 @@
           "im9.com",
           "mincdn.com",
           "biligo.com"
-            ]
+          ]
         },
         {
         "type": "field",
@@ -95,7 +196,6 @@
         "domain": [
           "geosite:hulu",
           "geosite:abema",
-          "geosite:disney",
           "geosite:dmm",
           "geosite:niconico",
           "music-book.jp",
@@ -143,9 +243,21 @@
           "radionikkei.jp",
           "smartstream.ne.jp",
           "fujitv.co.jp",
-          "stream.ne.jp"
+          "stream.ne.jp",
+          "abema.io",
+          "abema.tv",
+          "ds-linear-abematv.akamaized.net",
+          "linear-abematv.akamaized.net",
+          "ds-vod-abematv.akamaized.net",
+          "vod-abematv.akamaized.net",
+          "ameba.jp",
+          "hayabusa.io",
+          "mobile-collector.newrelic.com",
+          "vod-abematv.akamaized.net",
+          "bucketeer.jp",
+          "abema.adx.promo",
+          "hayabusa.media"
             ]
         }
     ]
 }
-
