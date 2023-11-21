@@ -15,13 +15,6 @@
         "geoip:private"
       ]
     	},
-    	{
-      "domain": [
-        "geosite:china-list"
-      ],
-      "outboundTag": "block",
-      "type": "field"
-    },
     {
       "ip": [
         "geoip:cn"
