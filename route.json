@@ -1,5 +1,5 @@
 {
-    "domainStrategy": "IPOnDemand",
+    "domainStrategy": "IPIfNonMatch",
     "rules": [
         {
             "type": "field",
