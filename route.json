@@ -227,11 +227,12 @@
             ]
         },    
         {
-      "type": "field",
-      "outboundTag": "block",
-      "ip": [
-        "geoip:private"
-      ]
+                "type": "field",
+                "ip": [
+                    "geoip:cn",
+                    "geoip:private"
+                ],
+                "outboundTag": "block"
     },
     {
       "type": "field",
@@ -239,13 +240,6 @@
       "protocol": [
         "bittorrent"
       ]
-    },
-    {
-      "ip": [
-        "geoip:cn"
-      ],
-      "outboundTag": "block",
-      "type": "field"
     },
     {
       "type": "field",
