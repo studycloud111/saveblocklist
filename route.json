@@ -9,25 +9,6 @@
             ]
         },
         {
-      "type": "field",
-      "outboundTag": "block",
-      "ip": [
-        "geoip:private"
-      ]
-    	},
-    {
-      "ip": [
-        "geoip:cn"
-      ],
-      "outboundTag": "block",
-      "type": "field"
-    },
-    {
-      "type": "field",
-      "outboundTag": "IPv4_out",
-      "network": "udp,tcp"
-    	},
-        {
         "type": "field",
         "outboundTag": "us_proxy",
         "domain": [
