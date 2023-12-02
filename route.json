@@ -72,6 +72,7 @@
         "outboundTag": "tw_proxy",
         "domain": [
           "geosite:bahamut",
+          "geosite:openai",
           "openai.com",
           "cdn.auth0.com",
           "azureedge.net",
