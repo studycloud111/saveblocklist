@@ -236,6 +236,20 @@
                 "outboundTag": "block"
     },
     {
+      "domain": [
+        "geosite:google"
+      ],
+      "outboundTag": "IPv4_out",
+      "type": "field"
+    },
+    {
+      "domain": [
+        "geosite:cn"
+      ],
+      "outboundTag": "block",
+      "type": "field"
+    },
+    {
       "type": "field",
       "outboundTag": "block",
       "protocol": [
