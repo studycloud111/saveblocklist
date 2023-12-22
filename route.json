@@ -230,10 +230,16 @@
         {
                 "type": "field",
                 "ip": [
-                    "geoip:cn",
                     "geoip:private"
                 ],
                 "outboundTag": "block"
+    },
+    {
+                "type": "field",
+                "ip": [
+                    "geoip:cn",
+                ],
+                "outboundTag": "warp"
     },
     {
       "domain": [
@@ -246,7 +252,7 @@
       "domain": [
         "geosite:cn"
       ],
-      "outboundTag": "block",
+      "outboundTag": "warp",
       "type": "field"
     },
     {
