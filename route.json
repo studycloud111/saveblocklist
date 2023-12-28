@@ -243,19 +243,19 @@
       "domain": [
         "geosite:google"
       ],
-      "outboundTag": "IPv4_out",
+      "outboundTag": "IPv4_out"
     },
     {
       "domain": [
         "geosite:cn"
       ],
-      "outboundTag": "warp",
+      "outboundTag": "warp"
     },
     {
       "ip": [
         "geoip:cn"
       ],
-      "outboundTag": "warp",
+      "outboundTag": "warp"
     },
     {
       "outboundTag": "IPv4_out",
