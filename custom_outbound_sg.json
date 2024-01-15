@@ -1,0 +1,125 @@
+[
+    {
+        "tag": "netflix_proxy",
+        "protocol": "Shadowsocks",
+        "settings": {
+         "servers": [
+           {
+            "address": "dns.fscloud.cc",
+            "port": 11124,
+            "method": "chacha20-ietf-poly1305",
+            "password": "db9aab25-8dc1-43fb-97a1-7c71090acfca",
+            "level": 0
+           }
+         ]
+       }
+     },
+         {
+        "tag": "catchplay_proxy",
+        "protocol": "Shadowsocks",
+        "settings": {
+         "servers": [
+           {
+            "address": "dns.fscloud.cc",
+            "port": 11124,
+            "method": "chacha20-ietf-poly1305",
+            "password": "db9aab25-8dc1-43fb-97a1-7c71090acfca",
+            "level": 0
+           }
+         ]
+       }
+     },
+             {
+        "tag": "uk_proxy",
+        "protocol": "Shadowsocks",
+        "settings": {
+         "servers": [
+           {
+            "address": "dnsuk.sankuaiqianshao.com",
+            "port": 23005,
+            "method": "chacha20-ietf-poly1305",
+            "password": "db9aab25-8dc1-43fb-97a1-7c71090acfca",
+            "level": 0
+           }
+         ]
+       }
+     },
+          {
+        "tag": "us_proxy",
+        "protocol": "Shadowsocks",
+        "settings": {
+         "servers": [
+           {
+            "address": "us.sankuaiqianshao.com",
+            "port": 23005,
+            "method": "chacha20-ietf-poly1305",
+            "password": "db9aab25-8dc1-43fb-97a1-7c71090acfca",
+            "level": 0
+           }
+         ]
+       }
+     },
+     {
+        "tag": "jp_proxy",
+        "protocol": "Shadowsocks",
+        "settings": {
+         "servers": [
+           {
+            "address": "dns.fscloud.cc",
+            "port": 11125,
+            "method": "chacha20-ietf-poly1305",
+            "password": "db9aab25-8dc1-43fb-97a1-7c71090acfca",
+            "level": 0
+           }
+         ]
+       }
+     },
+     {
+        "tag": "tw_proxy",
+        "protocol": "Shadowsocks",
+        "settings": {
+         "servers": [
+           {
+            "address": "tw.sankuaiqianshao.com",
+            "port": 11126,
+            "method": "chacha20-poly1305",
+            "password": "spcloud111",
+            "level": 0
+           }
+         ]
+       }
+     },
+     {
+        "tag": "hk_proxy",
+        "protocol": "Shadowsocks",
+        "settings": {
+         "servers": [
+           {
+            "address": "dns.fscloud.cc",
+            "port": 11123,
+            "method": "chacha20-ietf-poly1305",
+            "password": "db9aab25-8dc1-43fb-97a1-7c71090acfca",
+            "level": 0
+           }
+         ]
+       }
+     },
+              {
+    "tag": "IPv4_out",
+    "protocol": "freedom",
+    "settings": {
+      "domainStrategy": "UseIPv4v6"
+    }
+  },
+  {
+    "tag": "IPv6_out",
+    "protocol": "freedom",
+    "settings": {
+      "domainStrategy": "UseIPv6"
+    }
+  },
+  {
+    "protocol": "blackhole",
+    "tag": "block"
+  } 
+    ]
