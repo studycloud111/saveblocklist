@@ -5,10 +5,10 @@ FROM ubuntu:latest AS build
 ENV LANG=en_US.UTF-8 LANGUAGE=en_US:en LC_ALL=en_US.UTF-8
 
 # 设置工作目录
-WORKDIR /root/tengine-3.0.0
+WORKDIR /root/tengine-3.1.0
 
 # 复制文件到工作目录
-COPY ./tengine-3.0.0 .
+COPY ./tengine-3.1.0 .
 
 # 安装依赖并清理缓存
 RUN apt-get update -qq \
