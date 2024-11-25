@@ -1,5 +1,5 @@
 # 使用官方的 Ubuntu 镜像作为基础镜像
-FROM ubuntu:latest AS build
+FROM ubuntu:22.04 AS build
 
 # 设置环境变量
 ENV LANG=en_US.UTF-8 LANGUAGE=en_US:en LC_ALL=en_US.UTF-8
@@ -33,14 +33,17 @@ RUN apt-get update -qq \
     --add-module=modules/ngx_http_reqstat_module \
     --add-module=modules/ngx_http_proxy_connect_module \
     --add-module=modules/ngx_http_footer_filter_module \
-    && make \
+    && make -j$(nproc) \
     && make install \
     && apt-get remove -y build-essential gcc make \
     && apt-get autoremove -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-FROM ubuntu:latest
+FROM ubuntu:22.04
+
+# 设置环境变量
+ENV TZ=Asia/Shanghai
 
 # 设置工作目录
 WORKDIR /app/tengine
@@ -78,6 +81,24 @@ http { \n\
     #rewrite \n\
     include /usr/local/nginx/meip/*.conf; \n\
 }' > /app/tengine/conf/nginx.conf
+
+# 添加 nginx.service 文件
+RUN echo '[Unit] \n\
+Description=The nginx HTTP and reverse proxy server \n\
+After=syslog.target network.target remote-fs.target nss-lookup.target \n\
+ \n\
+[Service] \n\
+Type=forking \n\
+PIDFile=/usr/local/nginx/logs/nginx.pid \n\
+ExecStartPre=/usr/local/nginx/sbin/nginx -t \n\
+ExecStart=/usr/local/nginx/sbin/nginx \n\
+ExecReload=/usr/local/nginx/sbin/nginx -s reload \n\
+ExecStop=/usr/local/nginx/sbin/nginx -s stop \n\
+PrivateTmp=true \n\
+Restart=always \n\
+ \n\
+[Install] \n\
+WantedBy=multi-user.target' > /etc/systemd/system/nginx.service
 
 # 暴露容器端口号
 EXPOSE 80 443 3389
