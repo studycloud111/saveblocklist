@@ -27,7 +27,7 @@ RUN apt-get update -qq \
     # 生成语言环境
     && locale-gen en_US.UTF-8 \
     # 配置编译选项
-    && ./configure --prefix=/app/tengine \
+    && ./configure --prefix=/usr/local/nginx \
        --with-debug \
        --with-http_realip_module \
        --without-http_upstream_keepalive_module \
@@ -74,20 +74,20 @@ RUN apt-get update -qq \
     && rm -rf /var/lib/apt/lists/*
 
 # 设置工作目录
-WORKDIR /app/tengine
+WORKDIR /usr/local/nginx
 
 # 从构建阶段复制文件
-COPY --from=build /app/tengine /app/tengine
+COPY --from=build /usr/local/nginx /usr/local/nginx
 
 # 创建nginx命令的软链接
-RUN ln -s /app/tengine/sbin/nginx /usr/sbin/nginx
+RUN ln -s /usr/local/nginx/sbin/nginx /usr/sbin/nginx
 
 # 设置时区，创建配置文件目录，并设置 Tengine 配置
 RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && mkdir -p /usr/local/nginx/mytcp /usr/local/nginx/meip \
     # 创建 SSL 通用配置文件
-    && echo 'ssl_certificate /usr/local/soga/spcloud.crt;\n\
-ssl_certificate_key /usr/local/soga/privatesp.key;\n\
+    && echo 'ssl_certificate /usr/local/nginx/ngcrt.crt;\n\
+ssl_certificate_key /usr/local/nginx/ng.key;\n\
 ssl_session_cache shared:SSL:10m;\n\
 ssl_session_timeout 10m;\n\
 ssl_protocols TLSv1.2 TLSv1.3;' > /usr/local/nginx/mytcp/ssl_common.conf \
@@ -102,7 +102,7 @@ proxy_protocol on;' > /usr/local/nginx/mytcp/proxy_common.conf \
     && echo 'user  root; \n\
 worker_processes auto; \n\
 worker_rlimit_nofile 51200; \n\
-pid        /app/tengine/logs/nginx.pid; \n\
+pid        /usr/local/nginx/logs/nginx.pid; \n\
 events \n\
     { \n\
         use epoll; \n\
@@ -122,7 +122,7 @@ http { \n\
     check_shm_size 50m; \n\
     #rewrite \n\
     include /usr/local/nginx/meip/*.conf; \n\
-}' > /app/tengine/conf/nginx.conf
+}' > /usr/local/nginx/conf/nginx.conf
 
 # 创建配置文件并写入内容
 RUN echo 'server { \n\
@@ -148,11 +148,11 @@ After=syslog.target network.target remote-fs.target nss-lookup.target \n\
  \n\
 [Service] \n\
 Type=forking \n\
-PIDFile=/app/tengine/logs/nginx.pid \n\
-ExecStartPre=/usr/sbin/nginx -t \n\
-ExecStart=/usr/sbin/nginx \n\
-ExecReload=/usr/sbin/nginx -s reload \n\
-ExecStop=/usr/sbin/nginx -s stop \n\
+PIDFile=/usr/local/nginx/logs/nginx.pid \n\
+ExecStartPre=/usr/local/nginx/sbin/nginx -t \n\
+ExecStart=/usr/local/nginx/sbin/nginx \n\
+ExecReload=/usr/local/nginx/sbin/nginx -s reload \n\
+ExecStop=/usr/local/nginx/sbin/nginx -s stop \n\
 PrivateTmp=true \n\
 Restart=always \n\
  \n\
@@ -160,8 +160,8 @@ Restart=always \n\
 WantedBy=multi-user.target' > /etc/systemd/system/nginx.service
 
 # 创建必要的目录
-RUN mkdir -p /app/tengine/logs \
-    && touch /app/tengine/logs/nginx.pid
+RUN mkdir -p /usr/local/nginx/logs \
+    && touch /usr/local/nginx/logs/nginx.pid
 
 # 复制 entrypoint 脚本到容器中
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
