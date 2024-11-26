@@ -12,7 +12,7 @@ COPY ./tengine-3.1.0 .
 
 # 安装依赖并清理缓存
 RUN apt-get update -qq \
-    && apt-get install -y --no-install-recommends build-essential libpcre3 libpcre3-dev zlib1g-dev openssl libssl-dev gcc make iperf3 vim wget locales \
+    && apt-get install -y --no-install-recommends build-essential libpcre3 libpcre3-dev zlib1g-dev openssl libssl-dev gcc make iperf3 vim wget locales curl \
     && locale-gen en_US.UTF-8 \
     && ./configure --prefix=/app/tengine \
     --with-debug --with-http_realip_module \
@@ -82,6 +82,23 @@ http { \n\
     include /usr/local/nginx/meip/*.conf; \n\
 }' > /app/tengine/conf/nginx.conf
 
+# 创建配置文件并写入内容
+RUN echo 'server { \n\
+        listen 80 default_server; \n\
+        server_name _; \n\
+        if ($server_port !~ 443){ \n\
+            rewrite ^(/.*)$ https://$host$1 permanent; \n\
+        } \n\
+        location / { \n\
+            root   html; \n\
+            index  index.html index.htm; \n\
+        } \n\
+        error_page   500 502 503 504  /50x.html; \n\
+        location = /50x.html { \n\
+            root   html; \n\
+        } \n\
+    }' > /usr/local/nginx/mytcp/mysp.conf
+
 # 添加 nginx.service 文件
 RUN echo '[Unit] \n\
 Description=The nginx HTTP and reverse proxy server \n\
@@ -100,8 +117,14 @@ Restart=always \n\
 [Install] \n\
 WantedBy=multi-user.target' > /etc/systemd/system/nginx.service
 
+# 复制 entrypoint 脚本到容器中
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+
+# 使脚本可执行
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# 设置容器的启动命令
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
 # 暴露容器端口号
 EXPOSE 80 443 3389
-
-# 启动容器时自动启动 tengine
-CMD ["nginx", "-g", "daemon off;"]
