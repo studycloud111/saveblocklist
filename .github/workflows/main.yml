@@ -27,6 +27,6 @@ jobs:
           gh release create ${{ env.RELEASE_TAG }} \
             --title "Release ${{ env.RELEASE_TAG }}" \
             --notes "Automated release created at $(date +'%Y-%m-%d %H:%M:%S')" \
-            *.dat *.txt *.zip
+            *.conf *.json *.yaml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
